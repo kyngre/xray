@@ -1,0 +1,15 @@
+artifact_uri: file:///home/kmj388/capston/Swin/mlruns/261607928987196676/6ca92d4455a74b8c81f86ef1cf969ba6/artifacts
+end_time: 1745671373563
+entry_point_name: ''
+experiment_id: '261607928987196676'
+lifecycle_stage: active
+run_id: 6ca92d4455a74b8c81f86ef1cf969ba6
+run_name: SwinTransformer
+run_uuid: 6ca92d4455a74b8c81f86ef1cf969ba6
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1745671371906
+status: 4
+tags: []
+user_id: kmj388
