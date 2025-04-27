@@ -32,6 +32,9 @@ transform = transforms.Compose([
 ])
 
 # ===== API 엔드포인트 =====
+# 클래스 라벨 매핑
+label_map = {0: "비정상", 1: "정상"}
+
 @app.route("/predict", methods=["POST"])
 def predict():
     if 'file' not in request.files:
@@ -39,14 +42,20 @@ def predict():
 
     file = request.files['file']
     img_bytes = file.read()
-    img = Image.open(io.BytesIO(img_bytes)).convert('RGB')
-    img = transform(img).unsqueeze(0).to(device)  # (1, 3, 224, 224)
+    try:
+        img = Image.open(io.BytesIO(img_bytes)).convert('RGB')
+    except Exception:
+        return jsonify({"error": "Invalid image file"}), 400
+
+    img = transform(img).unsqueeze(0).to(device)
 
     with torch.no_grad():
         outputs = model(img)
         logits = outputs.logits
         preds = logits.argmax(dim=1).cpu().item()
 
+    label = label_map[preds]
+    return jsonify({"prediction": label})
     return jsonify({"prediction": int(preds)})
 
 # ===== 서버 실행 =====
