@@ -1,0 +1,43 @@
+/* Reset */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* 기본 폰트, 배경 */
+body, html {
+  font-family: 'Poppins', sans-serif;
+  background: #ffffff;
+  color: #111827;
+  min-height: 100vh;
+}
+
+/* 공통 레이아웃 */
+.page {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+/* 공통 Header */
+.header {
+  background: #f8fafc;
+  color: #0f172a;
+  text-align: center;
+  padding: 20px;
+  font-size: 32px;
+  font-weight: bold;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+/* 공통 Footer */
+.footer {
+  background: #f8fafc;
+  color: #64748b;
+  text-align: center;
+  padding: 12px;
+  font-size: 14px;
+  margin-top: auto;
+  box-shadow: 0 -2px 4px rgba(0,0,0,0.1);
+}
