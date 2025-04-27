@@ -19,11 +19,12 @@ function Analyze() {
     try {
       setLoading(true);
       setOriginalImgUrl(URL.createObjectURL(file));
-      const response = await axios.post('http://localhost:8000/upload/', formData, {
+      const response = await axios.post('http://10.125.208.217:5000/upload/', formData, {
         headers: { 'Content-Type': 'multipart/form-data' }
       });
+      
       setResult(response.data.result);
-      setGradcamUrl(`http://localhost:8000/${response.data.gradcam_path}`);
+      setGradcamUrl(`http://10.125.208.217:5000/${response.data.gradcam_path}`);
     } catch (error) {
       console.error('업로드 실패', error);
     } finally {
