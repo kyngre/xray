@@ -17,7 +17,7 @@ function Landing() {
       <main className="landing-main">
         {/* Hero Section */}
         <section className="hero">
-          <h1>AI 기반 얼굴 뼈 X-ray 자동 분석 솔루션</h1>
+          <h1>AI 기반 Facial Bone X-ray 분석 솔루션</h1>
           <p className="hero-subtitle">
             합성 데이터를 활용하여 신뢰성 있는 진단 보조 시스템을 제공합니다.
           </p>
@@ -37,7 +37,10 @@ function Landing() {
 
           <h2>사용 기술</h2>
           <ul>
-            <li>데이터: AI Hub 합성 X-ray 데이터</li>
+            <li>
+            데이터: <a href="https://www.aihub.or.kr/aihubdata/data/view.do?currMenu=115&topMenu=100&aihubDataSe=data&dataSetSn=71521" target="_blank" rel="noopener noreferrer">
+            AI Hub 합성 X-ray 데이터 </a>
+            </li>
             <li>모델: EfficientNet-B4, ResNet34</li>
             <li>시각화: Grad-CAM</li>
             <li>환경: Python, PyTorch, FastAPI, React</li>
@@ -46,7 +49,7 @@ function Landing() {
       </main>
 
       <footer className="footer">
-        © 2025 Facial Bone X-ray
+      © 2025 Facial Bone X-ray | <a href="https://github.com/kyngre/xray" target="_blank" rel="noopener noreferrer">GitHub</a>
       </footer>
     </div>
   );
