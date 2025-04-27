@@ -4,9 +4,11 @@ import mlflow.pytorch
 from PIL import Image
 import io
 import torchvision.transforms as transforms
+from flask_cors import CORS
 
 # ===== 기본 세팅 =====
 app = Flask(__name__)
+CORS(app)
 
 # device 세팅
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
@@ -35,7 +37,7 @@ transform = transforms.Compose([
 # 클래스 라벨 매핑
 label_map = {0: "비정상", 1: "정상"}
 
-@app.route("/predict", methods=["POST"])
+@app.route("/upload/", methods=["POST"])
 def predict():
     if 'file' not in request.files:
         return jsonify({"error": "No file provided"}), 400
@@ -53,10 +55,10 @@ def predict():
         outputs = model(img)
         logits = outputs.logits
         preds = logits.argmax(dim=1).cpu().item()
-
+    
     label = label_map[preds]
+    print(f"Predicted label: {label}")
     return jsonify({"prediction": label})
-    return jsonify({"prediction": int(preds)})
 
 # ===== 서버 실행 =====
 if __name__ == "__main__":
