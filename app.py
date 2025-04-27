@@ -33,7 +33,7 @@ def predict():
     file.save(save_path)
 
     # GradCAM 결과 생성
-    gradcam_result = gradcam_return.predict_and_visualize_advanced(save_path)
+    pred,gradcam_result = gradcam_return.predict_and_visualize_advanced(save_path)
 
     # 결과 저장
     result_filename = f"{uuid.uuid4().hex}.png"
@@ -42,7 +42,7 @@ def predict():
 
     # 결과 경로 리턴
     return jsonify({
-        "result": "GradCAM complete",
+        "result": pred,
         "gradcam_path": f"uploads/{result_filename}"  # 상대 경로 리턴
     }), 200
 

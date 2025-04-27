@@ -15,7 +15,7 @@ device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 # 1. MLflow에서 모델 로드
 model_name = "efficientnetb4"
 model_stage = "Production"
-model_uri = f"models:/{model_name}/{model_stage}"
+model_uri = f"models:/{model_name}/2"
 model = mlflow.pytorch.load_model(model_uri)
 
 # 2. device 이동 + eval 설정
