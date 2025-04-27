@@ -114,12 +114,18 @@ def predict_and_visualize_advanced(img_path):
     threshold = 0.4
     cam_thresholded = np.where(cam > threshold, cam, 0)
 
+    # 🔥 Canny 엣지
     cam_edges = cv2.Canny(np.uint8(cam_thresholded * 255), 50, 150)
-    cam_edges = cv2.GaussianBlur(cam_edges, (5, 5), sigmaX=1)
+
+    # 🔥 (추가) 엣지 굵게 (dilate)
+    kernel = np.ones((4, 4), np.uint8)  # 3x3 커널
+    cam_edges = cv2.dilate(cam_edges, kernel, iterations=1)
+
+    # 🔥 RGB 변환 + 빨간색 강조
     cam_edges = cv2.cvtColor(cam_edges, cv2.COLOR_GRAY2RGB)
+    cam_edges[:, :, 1:] = 0  # 빨간색만 남기기
 
-    cam_edges[:, :, 1:] = 0  # 빨간색 엣지만 강조
-
+    # 🔥 오버레이
     overlay = cv2.addWeighted(orig, 0.7, cam_edges, 1.2, 0)
 
     return pred_label, overlay
