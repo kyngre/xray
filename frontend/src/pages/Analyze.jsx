@@ -22,7 +22,7 @@ function Analyze() {
       const response = await axios.post('http://10.125.208.217:5000/upload/', formData, {
         headers: { 'Content-Type': 'multipart/form-data' }
       });
-      
+      console.log(response.data);
       setResult(response.data.result);
       setGradcamUrl(`http://10.125.208.217:5000/${response.data.gradcam_path}`);
     } catch (error) {

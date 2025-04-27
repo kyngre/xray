@@ -5,24 +5,20 @@ from PIL import Image
 import numpy as np
 import cv2
 import matplotlib.pyplot as plt
-
+import mlflow.pytorch  # MLflow PyTorch 모듈 추가
+mlflow.set_tracking_uri("http://10.125.208.184:5000")
 # 0. Device 설정
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
-# 1. EfficientNet-B4 모델 기본 구조 만들기
-model = models.efficientnet_b4(pretrained=False)
+# 1. MLflow에서 모델 로드
+# MLflow에 저장된 모델의 run_id와 경로를 지정
+model_name = "efficientnetb4"
+model_stage = "Production"   # 또는 "Staging" 가능
 
-# 2. classifier를 2개 클래스로 교체
-model.classifier[1] = nn.Linear(model.classifier[1].in_features, 2)
+model_uri = f"models:/{model_name}/{model_stage}"
+model = mlflow.pytorch.load_model(model_uri)
 
-# 3. checkpoint 불러오기 및 로드
-checkpoint = torch.load('/home/kangkr1002/facial_bone/efficientnet_b4_facial_bone.pth', map_location=device)
-model_dict = model.state_dict()
-pretrained_dict = {k: v for k, v in checkpoint.items() if k in model_dict}
-model_dict.update(pretrained_dict)
-model.load_state_dict(model_dict)
-
-# 4. device 이동 + eval 설정
+# 2. device 이동 + eval 설정
 model = model.to(device)
 model.eval()
 print("\u2705 모델 로딩 완료")

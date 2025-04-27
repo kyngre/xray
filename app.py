@@ -1,41 +1,23 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify,send_from_directory
 import torch
 import mlflow.pytorch
 from PIL import Image
 import io
 import torchvision.transforms as transforms
 from flask_cors import CORS
+import os
+import gradcam_return
+import cv2
+import base64
+import uuid
+
 
 # ===== 기본 세팅 =====
 app = Flask(__name__)
 CORS(app)
 
-# device 세팅
-device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-
-# 모델 로드
-mlflow.set_tracking_uri("http://10.125.208.184:5000")
-model_name = "VIT_2_Model"
-model_stage = "Production"   # 또는 "Staging" 가능
-
-model_uri = f"models:/{model_name}/{model_stage}"
-model = mlflow.pytorch.load_model(model_uri)
-model = model.to(device)
-model.eval()
-
-# transform 정의 (※ 모델 입력 사이즈에 맞춰서 수정)
-transform = transforms.Compose([
-    transforms.Resize((224, 224)),
-    transforms.ToTensor(),
-    transforms.Normalize(
-        mean=[0.485, 0.456, 0.406],
-        std=[0.229, 0.224, 0.225]
-    )
-])
-
-# ===== API 엔드포인트 =====
-# 클래스 라벨 매핑
-label_map = {0: "비정상", 1: "정상"}
+UPLOAD_FOLDER = "./uploads"
+os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
 @app.route("/upload/", methods=["POST"])
 def predict():
@@ -43,22 +25,32 @@ def predict():
         return jsonify({"error": "No file provided"}), 400
 
     file = request.files['file']
-    img_bytes = file.read()
-    try:
-        img = Image.open(io.BytesIO(img_bytes)).convert('RGB')
-    except Exception:
-        return jsonify({"error": "Invalid image file"}), 400
+    if file.filename == '':
+        return jsonify({"error": "No selected file"}), 400
 
-    img = transform(img).unsqueeze(0).to(device)
+    # 파일 저장
+    save_path = os.path.join(UPLOAD_FOLDER, file.filename)
+    file.save(save_path)
 
-    with torch.no_grad():
-        outputs = model(img)
-        logits = outputs.logits
-        preds = logits.argmax(dim=1).cpu().item()
+    # GradCAM 결과 생성
+    gradcam_result = gradcam_return.predict_and_visualize_advanced(save_path)
+
+    # 결과 저장
+    result_filename = f"{uuid.uuid4().hex}.png"
+    result_path = os.path.join(UPLOAD_FOLDER, result_filename)
+    cv2.imwrite(result_path, gradcam_result)
+
+    # 결과 경로 리턴
+    return jsonify({
+        "result": "GradCAM complete",
+        "gradcam_path": f"uploads/{result_filename}"  # 상대 경로 리턴
+    }), 200
+
     
-    label = label_map[preds]
-    print(f"Predicted label: {label}")
-    return jsonify({"prediction": label})
+# 업로드된 파일 제공하는 라우트
+@app.route('/uploads/<filename>')
+def uploaded_file(filename):
+    return send_from_directory(UPLOAD_FOLDER, filename)
 
 # ===== 서버 실행 =====
 if __name__ == "__main__":
