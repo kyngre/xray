@@ -1,0 +1,19 @@
+# MLflow 실험
+mlruns/
+
+xray_dataset/
+
+# multiprocessing 임시폴더
+pymp-*/
+
+# 임시 파일
+tmp*/
+
+# Jupyter 자동 체크포인트
+.ipynb_checkpoints/
+
+# 모델 파일 무시
+*.pth
+*.ckpt
+*.pt
+*.h5
